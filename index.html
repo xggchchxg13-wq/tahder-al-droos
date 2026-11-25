@@ -661,7 +661,7 @@ $('#q').addEventListener('input',function(e){
   if(!q){box.hidden=true;$('#seriesBlock').hidden=false;return}
   var hits=[];SERIES.forEach(function(s){s.lessons.forEach(function(l,i){if(norm(l.title).indexOf(q)>-1||norm(s.name).indexOf(q)>-1)hits.push([s,l,i])})});
   $('#seriesBlock').hidden=true;box.hidden=false;
-  box.innerHTML=hits.length?'<ol class="list">'+hits.slice(0,60).map(function(h){return '<li><a class="row press" href="#l/'+h[1].key+'" style="--accent:'+accentOf(h[0])+'"><span class="num">'+AR(h[2]+1)+'</span><span class="row-t"><b>'+esc(h[1].title)+'</b><small>'+esc(h[0].name)+'</small></span>'+chev+'</a></li>'}).join('')+'</ol>':'<div class="empty">لا توجد دروس بهذا الاسم.</div>';
+  box.innerHTML=hits.length?'<ol class="list">'+hits.slice(0,60).map(function(h){return '<li><a class="row press" href="#l/'+h[1].key+'" style="--accent:'+accentOf(h[0])+'"><span class="num">'+AR(h[1].idx)+'</span><span class="row-t"><b>'+esc(h[1].title)+'</b><small>'+esc(h[0].name)+'</small></span>'+chev+'</a></li>'}).join('')+'</ol>':'<div class="empty">لا توجد دروس بهذا الاسم.</div>';
 });
 
 /* ---------- series ---------- */
@@ -673,7 +673,7 @@ function renderSeries(s){
   var target=s.lessons[li>-1?li:0];
   $('#sStart').hidden=!target;
   if(target){$('#sStart').innerHTML=(li>-1?'تابع: الدرس '+AR(li+1):'ابدأ من الدرس الأول')+' '+ARROW;$('#sStart').onclick=function(){location.hash='#l/'+target.key}}
-  $('#sList').innerHTML=s.lessons.map(function(l,i){return '<li><a class="row press" href="#l/'+l.key+'"><span class="num">'+AR(i+1)+'</span><span class="row-t"><b>'+esc(l.title)+(l.visibility==='restricted'&&ME.role==='admin'?LOCK:'')+'</b><small>الدرس '+AR(i+1)+' من '+AR(s.lessons.length)+'</small></span>'+chev+'</a></li>'}).join('');
+  $('#sList').innerHTML=s.lessons.map(function(l,i){return '<li><a class="row press" href="#l/'+l.key+'"><span class="num">'+AR(l.idx)+'</span><span class="row-t"><b>'+esc(l.title)+(l.visibility==='restricted'&&ME.role==='admin'?LOCK:'')+'</b><small>الدرس '+AR(l.idx)+' من '+AR(s.lessons[s.lessons.length-1].idx)+'</small></span>'+chev+'</a></li>'}).join('');
 }
 
 /* ---------- lesson ---------- */
@@ -698,7 +698,7 @@ async function openLesson(l){
   var i=s.lessons.indexOf(l);
   curLesson=l;setAccent(s);
   $('#lTitle').textContent=l.title;$('#lBackT').textContent=s.name;$('#lBack').href='#s/'+s.id;
-  $('#lPos').textContent=AR(i+1)+' / '+AR(s.lessons.length);
+  $('#lPos').textContent=AR(s.lessons[i].idx)+' / '+AR(s.lessons[s.lessons.length-1].idx);
   var p=$('#lPrev'),n=$('#lNext');p.disabled=i<=0;n.disabled=i>=s.lessons.length-1;
   p.onclick=function(){location.hash='#l/'+s.lessons[i-1].key};n.onclick=function(){location.hash='#l/'+s.lessons[i+1].key};
   document.title=l.title+' · تحضير الدروس';
